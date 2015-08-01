@@ -3,6 +3,8 @@ Garnut consists of a number of classes that use the base NLP library to provide 
 
 ##Prerequisites
 
+- GCC version 4.8 or greater.
+- MSVC version VC110(2012) or greater.
 - [CMake](http://www.cmake.org/) version 3.2.0 or greater.
 
 ##Getting Started
