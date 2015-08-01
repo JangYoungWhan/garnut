@@ -20,7 +20,9 @@ cd build
 
 # Configure and build
 cmake ../
-mak
+make
+
+```
 
 ##Contact
 
