@@ -39,7 +39,7 @@ ProgressBar<T_int>::~ProgressBar()
 
 template <typename T_int>
 inline
-void ProgressBar<T_int>::dispalyPrgressBar(T_int x, T_int n, int w = 50)
+void ProgressBar<T_int>::dispalyPrgressBar(T_int x, T_int n, int w)
 {
   x += 1;
   if ((x != n) && (x % (n/100+1) != 0)) return;
