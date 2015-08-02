@@ -14,7 +14,7 @@
 
 namespace nlp {
 namespace jang {
-namespace ganet {
+namespace garnut {
 
 template <typename T_int>
 class ProgressBar
@@ -60,7 +60,7 @@ void ProgressBar<T_int>::dispalyPrgressBar(T_int x, T_int n, int w)
   std::wcout << "]\r" << std::flush;
 }
 
-} // namespace ganet
+} // namespace garnut
 } // namespace jang
 } // namespace nlp
 

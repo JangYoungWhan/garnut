@@ -13,7 +13,7 @@
 
 namespace nlp {
 namespace jang {
-namespace ganet {
+namespace garnut {
 
 template <typename T_str>
 void splitStringToNgram(const T_str& src, std::vector<T_str>& dst, const char *delimiter, bool keepEmpty)
@@ -34,7 +34,7 @@ void splitStringToNgram(const T_str& src, std::vector<T_str>& dst, const char *d
 		dst.push_back(src.substr(prev));
 }
 
-} // namespace ganet
+} // namespace garnut
 } // namespace jang
 } // namespace nlp
 
