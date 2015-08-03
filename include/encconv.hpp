@@ -10,6 +10,7 @@
 #define ENC_CONV_HPP_
 
 #include <string>
+#include <vector>
 
 namespace nlp {
 namespace jang {
@@ -34,20 +35,25 @@ public:
 
   // It fill second parameter dst with std::wstring type basically.
   static bool convertFromUtf8ToUnicode(const std::string& src, std::wstring& dst);
+  // It supports SMP unicode range.
+  static bool convertFromUtf8ToUnicode(const std::string& src, std::vector<UnicodeChar>& dst);
 
   // It returns std::string type basically.
   static bool convertFromUnicodeToUtf8(const wchar_t* src, char* dst);
 
   // It fill second parameter dst with std::string type basically.
   static bool convertFromUnicodeToUtf8(const std::wstring& src, std::string& dst);
+  // It supports SMP unicode range.
+  static bool convertFromUnicodeToUtf8(const std::vector<UnicodeChar>& src, std::string& dst);
 
 private:
   static UnicodeChar getCodeFlag(size_t pos, const std::wstring& src);
+  static UnicodeChar getCodeFlag(size_t pos, const std::vector<UnicodeChar>& src);
   static CodeRange getCodeRange(UnicodeChar flag);
 
 private:
   static void transformUtf8CharToUnicodeChar(const std::string& src, std::wstring& dst);
-  static void transformUnicodeCharToUtf8Char(const unsigned int code, std::string& dst, const CodeRange& code_range);
+  static void transformUnicodeCharToUtf8Char(const UnicodeChar code, std::string& dst, const CodeRange& code_range);
 
 protected:
   static const UnicodeChar BMP_CODE_RANGE_BEG_1_   = 0x00000000;

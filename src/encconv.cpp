@@ -83,23 +83,86 @@ bool EncodingConverter::convertFromUnicodeToUtf8(const std::wstring& src, std::s
   return convert_result;
 }
 
+bool EncodingConverter::convertFromUnicodeToUtf8(const std::vector<UnicodeChar>& src, std::string& dst)
+{
+  bool convert_result = false;
+
+  for (size_t idx=0; idx<src.size(); ++idx)
+  {
+    std::wstring uni_ch;
+
+    // converted current character.
+    std::string utf8_ch;
+
+    UnicodeChar flag = getCodeFlag(idx, src);
+
+    CodeRange code_range = getCodeRange(flag);
+
+    uni_ch.reserve(2);
+    switch (code_range)
+    {
+    case nlp::jang::garnut::BMP_1_BYTES_RANGE:
+      uni_ch.push_back(src[idx]);
+      transformUnicodeCharToUtf8Char(flag, utf8_ch, BMP_1_BYTES_RANGE);
+      convert_result = true;
+      break;
+    case nlp::jang::garnut::BMP_2_BYTES_RANGE:
+      uni_ch.push_back(src[idx]);
+      transformUnicodeCharToUtf8Char(flag, utf8_ch, BMP_2_BYTES_RANGE);
+      convert_result = true;
+      break;
+    case nlp::jang::garnut::BMP_3_BYTES_RANGE:
+      uni_ch.push_back(src[idx]);
+      transformUnicodeCharToUtf8Char(flag, utf8_ch, BMP_3_BYTES_RANGE);
+      convert_result = true;
+      break;
+    case nlp::jang::garnut::SMP_RANGE:
+      uni_ch.push_back(src[idx]);
+      transformUnicodeCharToUtf8Char(flag, utf8_ch, SMP_RANGE);
+      convert_result = true;
+      break;
+    case nlp::jang::garnut::NONE:
+      convert_result = false;
+      break;
+    default:
+      convert_result = false;
+      break;
+    }
+
+    for (auto ch = utf8_ch.begin(); ch!=utf8_ch.end(); ++ch)
+    {
+      dst.push_back(*ch);
+    }
+  }
+
+  return convert_result;
+}
+
 inline
 UnicodeChar EncodingConverter::getCodeFlag(size_t pos, const std::wstring& src)
 {
   unsigned int code_flag = 0x00000000;
 
-  // It have to be BMP code range, otherwise It has a critical problem.
+  // Always It have to be BMP code range, otherwise It has a critical problem.
   if (true)
   {
-    code_flag = static_cast<unsigned int>(src[pos]);
+    code_flag = static_cast<UnicodeChar>(src[pos]);
   }
-  else // we have to check high and low surrogates.
+  // If it is possible, we have to check high and low surrogates.
+  // TO DO : YW. Jang
+  else
   {
     code_flag |= (static_cast<unsigned int>(src[0]) << 16) & 0xFFFF0000;
     code_flag |= static_cast<unsigned int>(src[1]);
   }
 
   return code_flag;
+}
+
+inline
+UnicodeChar EncodingConverter::getCodeFlag(size_t pos, const std::vector<UnicodeChar>& src)
+{
+  return src[pos];
 }
 
 inline
@@ -143,7 +206,7 @@ void EncodingConverter::transformUtf8CharToUnicodeChar(const std::string& src, s
 }
 
 inline
-void EncodingConverter::transformUnicodeCharToUtf8Char(const unsigned int code, std::string& dst, const CodeRange& code_range)
+void EncodingConverter::transformUnicodeCharToUtf8Char(const UnicodeChar code, std::string& dst, const CodeRange& code_range)
 {
   char utf_code;
   char high_surrogated, low_surrogated;
@@ -169,6 +232,15 @@ void EncodingConverter::transformUnicodeCharToUtf8Char(const unsigned int code, 
       dst.push_back(utf_code); // 10xx xxxx
       break;
     case nlp::jang::garnut::SMP_RANGE:
+      utf_code = (0xF0) | (code >> 18);
+      dst.push_back(utf_code); // 1111 0xxx
+      utf_code = (UTF8_PREFIX_MASK_) | ((code >> 12) & 0x3F);
+      dst.push_back(utf_code); // 10xx xxxx
+      utf_code = (UTF8_PREFIX_MASK_) | ((code >> 6) & 0x3F);
+      dst.push_back(utf_code); // 10xx xxxx
+      utf_code = (UTF8_PREFIX_MASK_) | ((code) & 0x3F);
+      dst.push_back(utf_code); // 10xx xxxx
+#if 0 // below this rule is utf16 to utf8
       high_surrogated = ((code >> 22) & 0x0F) + 1;
       utf_code = (0xF0) | (high_surrogated >> 2);
       dst.push_back(utf_code); // 1111 0zzz
@@ -180,6 +252,7 @@ void EncodingConverter::transformUnicodeCharToUtf8Char(const unsigned int code, 
       dst.push_back(utf_code); // 10xx xxxx
       utf_code = (UTF8_PREFIX_MASK_) | ((code) & 0x3F);
       dst.push_back(utf_code); // 10xx xxxx
+#endif
       break;
     case nlp::jang::garnut::NONE:
       break;
