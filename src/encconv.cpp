@@ -19,7 +19,54 @@ bool EncodingConverter::convertFromUtf8ToUnicode(const char* src, wchar_t* dst)
 
 bool EncodingConverter::convertFromUtf8ToUnicode(const std::string& src, std::wstring& dst)
 {
-  return false;
+  bool convert_result = true;
+
+  for (size_t idx=0; idx<src.length(); ++idx)
+  {
+    std::string utf8_ch;
+
+    // converted current character.
+    std::wstring uni_ch;
+
+    //UnicodeChar flag = getCodeFlag(idx, src);
+
+    CodeRange code_range = getUtf8CodeRange(src[idx]);
+
+    utf8_ch.reserve(2);
+    switch (code_range)
+    {
+    case nlp::jang::garnut::BMP_1_BYTES_RANGE:
+      uni_ch.push_back(src[idx]);
+      //transformUnicodeCharToUtf8Char(flag, utf8_ch, BMP_1_BYTES_RANGE);
+      break;
+    case nlp::jang::garnut::BMP_2_BYTES_RANGE:
+      uni_ch.push_back(src[idx]);
+      //transformUnicodeCharToUtf8Char(flag, utf8_ch, BMP_2_BYTES_RANGE);
+      break;
+    case nlp::jang::garnut::BMP_3_BYTES_RANGE:
+      uni_ch.push_back(src[idx]);
+      //transformUnicodeCharToUtf8Char(flag, utf8_ch, BMP_3_BYTES_RANGE);
+      break;
+    case nlp::jang::garnut::SMP_RANGE:
+      uni_ch.push_back(src[idx]);
+      uni_ch.push_back(src[++idx]);
+      //transformUnicodeCharToUtf8Char(flag, utf8_ch, SMP_RANGE);
+      break;
+    case nlp::jang::garnut::NONE:
+      convert_result = false;
+      break;
+    default:
+      convert_result = false;
+      break;
+    }
+
+    for (auto ch = utf8_ch.begin(); ch!=utf8_ch.end(); ++ch)
+    {
+      dst.push_back(*ch);
+    }
+  }
+
+  return convert_result;
 }
 
 bool EncodingConverter::convertFromUnicodeToUtf8(const wchar_t* src, char* dst)
@@ -29,7 +76,7 @@ bool EncodingConverter::convertFromUnicodeToUtf8(const wchar_t* src, char* dst)
 
 bool EncodingConverter::convertFromUnicodeToUtf8(const std::wstring& src, std::string& dst)
 {
-  bool convert_result = false;
+  bool convert_result = true;
 
   for (size_t idx=0; idx<src.length(); ++idx)
   {
@@ -40,31 +87,27 @@ bool EncodingConverter::convertFromUnicodeToUtf8(const std::wstring& src, std::s
 
     UnicodeChar flag = getCodeFlag(idx, src);
 
-    CodeRange code_range = getCodeRange(flag);
+    CodeRange code_range = getUnicodeCodeRange(src[idx]);
 
-    uni_ch.reserve(2);
+    uni_ch.reserve(4);
     switch (code_range)
     {
     case nlp::jang::garnut::BMP_1_BYTES_RANGE:
       uni_ch.push_back(src[idx]);
       transformUnicodeCharToUtf8Char(flag, utf8_ch, BMP_1_BYTES_RANGE);
-      convert_result = true;
       break;
     case nlp::jang::garnut::BMP_2_BYTES_RANGE:
       uni_ch.push_back(src[idx]);
       transformUnicodeCharToUtf8Char(flag, utf8_ch, BMP_2_BYTES_RANGE);
-      convert_result = true;
       break;
     case nlp::jang::garnut::BMP_3_BYTES_RANGE:
       uni_ch.push_back(src[idx]);
       transformUnicodeCharToUtf8Char(flag, utf8_ch, BMP_3_BYTES_RANGE);
-      convert_result = true;
       break;
     case nlp::jang::garnut::SMP_RANGE:
       uni_ch.push_back(src[idx]);
       uni_ch.push_back(src[++idx]);
       transformUnicodeCharToUtf8Char(flag, utf8_ch, SMP_RANGE);
-      convert_result = true;
       break;
     case nlp::jang::garnut::NONE:
       convert_result = false;
@@ -96,7 +139,7 @@ bool EncodingConverter::convertFromUnicodeToUtf8(const std::vector<UnicodeChar>&
 
     UnicodeChar flag = getCodeFlag(idx, src);
 
-    CodeRange code_range = getCodeRange(flag);
+    CodeRange code_range = getUnicodeCodeRange(flag);
 
     uni_ch.reserve(2);
     switch (code_range)
@@ -166,7 +209,7 @@ UnicodeChar EncodingConverter::getCodeFlag(size_t pos, const std::vector<Unicode
 }
 
 inline
-CodeRange EncodingConverter::getCodeRange(UnicodeChar flag)
+CodeRange EncodingConverter::getUnicodeCodeRange(UnicodeChar flag)
 {
   // 000000-00007F
   if ((BMP_CODE_RANGE_BEG_1_ <= flag) && (flag <= BMP_CODE_RANGE_END_1_))
@@ -188,6 +231,40 @@ CodeRange EncodingConverter::getCodeRange(UnicodeChar flag)
 
   // 010000-10FFFF
   else if ((SMP_CODE_RANGE_BEG_ <= flag) && (flag <= SMP_CODE_RANGE_END_))
+  {
+    return CodeRange::SMP_RANGE;
+  }
+
+  // otherwise
+  else
+  {
+    return CodeRange::NONE;
+  }
+}
+
+inline
+CodeRange EncodingConverter::getUtf8CodeRange(UnicodeChar flag)
+{
+  // 0xxx xxxx
+  if ((flag & 0x00000080) == UTF8_1_BYTE_PREFIX_)
+  {
+    return CodeRange::BMP_1_BYTES_RANGE;
+  }
+
+  // 110x xxxx
+  else if ((flag & 0x0000E000) == UTF8_2_BYTE_PREFIX_)
+  {
+    return CodeRange::BMP_2_BYTES_RANGE;
+  }
+
+  // 1110 xxxx
+  else if ((flag & 0x00F00000) == UTF8_3_BYTE_PREFIX_)
+  {
+    return CodeRange::BMP_3_BYTES_RANGE;
+  }
+
+  // 1111 0xxx
+  else if ((flag & 0xF8000000) == UTF8_4_BYTE_PREFIX_)
   {
     return CodeRange::SMP_RANGE;
   }

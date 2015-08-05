@@ -49,24 +49,29 @@ public:
 private:
   static UnicodeChar getCodeFlag(size_t pos, const std::wstring& src);
   static UnicodeChar getCodeFlag(size_t pos, const std::vector<UnicodeChar>& src);
-  static CodeRange getCodeRange(UnicodeChar flag);
+  static CodeRange getUnicodeCodeRange(UnicodeChar flag);
+  static CodeRange getUtf8CodeRange(UnicodeChar flag);
 
 private:
   static void transformUtf8CharToUnicodeChar(const std::string& src, std::wstring& dst);
   static void transformUnicodeCharToUtf8Char(const UnicodeChar code, std::string& dst, const CodeRange& code_range);
 
-protected:
-  static const UnicodeChar BMP_CODE_RANGE_BEG_1_   = 0x00000000;
-  static const UnicodeChar BMP_CODE_RANGE_END_1_   = 0x0000007F;
-  static const UnicodeChar BMP_CODE_RANGE_BEG_2_   = 0x00000080;
-  static const UnicodeChar BMP_CODE_RANGE_END_2_   = 0x000007FF;
-  static const UnicodeChar BMP_CODE_RANGE_BEG_3_   = 0x00000800;
-  static const UnicodeChar BMP_CODE_RANGE_END_3_   = 0x0000FFFF;
-  static const UnicodeChar SMP_CODE_RANGE_BEG_     = 0x00010000;
-  static const UnicodeChar SMP_CODE_RANGE_END_     = 0x0010FFFF;
+protected: // unicode range
+  static const UnicodeChar BMP_CODE_RANGE_BEG_1_    = 0x00000000;
+  static const UnicodeChar BMP_CODE_RANGE_END_1_    = 0x0000007F;
+  static const UnicodeChar BMP_CODE_RANGE_BEG_2_    = 0x00000080;
+  static const UnicodeChar BMP_CODE_RANGE_END_2_    = 0x000007FF;
+  static const UnicodeChar BMP_CODE_RANGE_BEG_3_    = 0x00000800;
+  static const UnicodeChar BMP_CODE_RANGE_END_3_    = 0x0000FFFF;
+  static const UnicodeChar SMP_CODE_RANGE_BEG_      = 0x00010000;
+  static const UnicodeChar SMP_CODE_RANGE_END_      = 0x0010FFFF;
 
-protected:
-  static const unsigned char UTF8_PREFIX_MASK_ = 0x80; // 10xxxxxx
+protected: // utf8 range
+  static const UnicodeChar UTF8_1_BYTE_PREFIX_      = 0x00000000; // 0xxxxxxx
+  static const UnicodeChar UTF8_2_BYTE_PREFIX_      = 0x000000C0; // 110xxxxx xxxxxxxx
+  static const UnicodeChar UTF8_3_BYTE_PREFIX_      = 0x00E00000; // 1110xxxx xxxxxxxx xxxxxxxx
+  static const UnicodeChar UTF8_4_BYTE_PREFIX_      = 0xF0000000; // 11110xxx xxxxxxxx xxxxxxxx xxxxxxxx
+  static const unsigned char UTF8_PREFIX_MASK_      = 0x80; // 10xxxxxx
 };
 
 
