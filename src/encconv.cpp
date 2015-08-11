@@ -25,8 +25,7 @@ bool EncodingConverter::convertFromUtf8ToUnicode(const std::string& src, std::ws
   {
     std::string utf8_ch;
 
-    // converted current character.
-    std::wstring uni_ch;
+    
 
     //UnicodeChar flag = getCodeFlag(idx, src);
 
@@ -36,21 +35,19 @@ bool EncodingConverter::convertFromUtf8ToUnicode(const std::string& src, std::ws
     switch (code_range)
     {
     case nlp::jang::garnut::BMP_1_BYTES_RANGE:
-      uni_ch.push_back(src[idx]);
-      //transformUnicodeCharToUtf8Char(flag, utf8_ch, BMP_1_BYTES_RANGE);
+      transformUtf8CharToUnicodeChar(&src[idx], dst, BMP_1_BYTES_RANGE);
       break;
     case nlp::jang::garnut::BMP_2_BYTES_RANGE:
-      uni_ch.push_back(src[idx]);
-      //transformUnicodeCharToUtf8Char(flag, utf8_ch, BMP_2_BYTES_RANGE);
+      transformUtf8CharToUnicodeChar(&src[idx], dst, BMP_2_BYTES_RANGE);
+      idx += BMP_2_BYTES_RANGE - 1;
       break;
     case nlp::jang::garnut::BMP_3_BYTES_RANGE:
-      uni_ch.push_back(src[idx]);
-      //transformUnicodeCharToUtf8Char(flag, utf8_ch, BMP_3_BYTES_RANGE);
+      transformUtf8CharToUnicodeChar(&src[idx], dst, BMP_3_BYTES_RANGE);
+      idx += BMP_3_BYTES_RANGE - 1;
       break;
     case nlp::jang::garnut::SMP_RANGE:
-      uni_ch.push_back(src[idx]);
-      uni_ch.push_back(src[++idx]);
-      //transformUnicodeCharToUtf8Char(flag, utf8_ch, SMP_RANGE);
+      transformUtf8CharToUnicodeChar(&src[idx], dst, SMP_RANGE);
+      idx += SMP_RANGE - 1;
       break;
     case nlp::jang::garnut::NONE:
       convert_result = false;
@@ -80,8 +77,6 @@ bool EncodingConverter::convertFromUnicodeToUtf8(const std::wstring& src, std::s
 
   for (size_t idx=0; idx<src.length(); ++idx)
   {
-    std::wstring uni_ch;
-
     // converted current character.
     std::string utf8_ch;
 
@@ -89,25 +84,20 @@ bool EncodingConverter::convertFromUnicodeToUtf8(const std::wstring& src, std::s
 
     CodeRange code_range = getUnicodeCodeRange(src[idx]);
 
-    uni_ch.reserve(4);
     switch (code_range)
     {
     case nlp::jang::garnut::BMP_1_BYTES_RANGE:
-      uni_ch.push_back(src[idx]);
       transformUnicodeCharToUtf8Char(flag, utf8_ch, BMP_1_BYTES_RANGE);
       break;
     case nlp::jang::garnut::BMP_2_BYTES_RANGE:
-      uni_ch.push_back(src[idx]);
       transformUnicodeCharToUtf8Char(flag, utf8_ch, BMP_2_BYTES_RANGE);
       break;
     case nlp::jang::garnut::BMP_3_BYTES_RANGE:
-      uni_ch.push_back(src[idx]);
       transformUnicodeCharToUtf8Char(flag, utf8_ch, BMP_3_BYTES_RANGE);
       break;
     case nlp::jang::garnut::SMP_RANGE:
-      uni_ch.push_back(src[idx]);
-      uni_ch.push_back(src[++idx]);
       transformUnicodeCharToUtf8Char(flag, utf8_ch, SMP_RANGE);
+      ++idx;
       break;
     case nlp::jang::garnut::NONE:
       convert_result = false;
@@ -132,8 +122,6 @@ bool EncodingConverter::convertFromUnicodeToUtf8(const std::vector<UnicodeChar>&
 
   for (size_t idx=0; idx<src.size(); ++idx)
   {
-    std::wstring uni_ch;
-
     // converted current character.
     std::string utf8_ch;
 
@@ -141,26 +129,21 @@ bool EncodingConverter::convertFromUnicodeToUtf8(const std::vector<UnicodeChar>&
 
     CodeRange code_range = getUnicodeCodeRange(flag);
 
-    uni_ch.reserve(2);
     switch (code_range)
     {
     case nlp::jang::garnut::BMP_1_BYTES_RANGE:
-      uni_ch.push_back(src[idx]);
       transformUnicodeCharToUtf8Char(flag, utf8_ch, BMP_1_BYTES_RANGE);
       convert_result = true;
       break;
     case nlp::jang::garnut::BMP_2_BYTES_RANGE:
-      uni_ch.push_back(src[idx]);
       transformUnicodeCharToUtf8Char(flag, utf8_ch, BMP_2_BYTES_RANGE);
       convert_result = true;
       break;
     case nlp::jang::garnut::BMP_3_BYTES_RANGE:
-      uni_ch.push_back(src[idx]);
       transformUnicodeCharToUtf8Char(flag, utf8_ch, BMP_3_BYTES_RANGE);
       convert_result = true;
       break;
     case nlp::jang::garnut::SMP_RANGE:
-      uni_ch.push_back(src[idx]);
       transformUnicodeCharToUtf8Char(flag, utf8_ch, SMP_RANGE);
       convert_result = true;
       break;
@@ -243,28 +226,28 @@ CodeRange EncodingConverter::getUnicodeCodeRange(UnicodeChar flag)
 }
 
 inline
-CodeRange EncodingConverter::getUtf8CodeRange(UnicodeChar flag)
+CodeRange EncodingConverter::getUtf8CodeRange(unsigned char flag)
 {
   // 0xxx xxxx
-  if ((flag & 0x00000080) == UTF8_1_BYTE_PREFIX_)
+  if ((flag & 0x80) == UTF8_1_BYTE_PREFIX_)
   {
     return CodeRange::BMP_1_BYTES_RANGE;
   }
 
   // 110x xxxx
-  else if ((flag & 0x0000E000) == UTF8_2_BYTE_PREFIX_)
+  else if ((flag & 0xE0) == UTF8_2_BYTE_PREFIX_)
   {
     return CodeRange::BMP_2_BYTES_RANGE;
   }
 
   // 1110 xxxx
-  else if ((flag & 0x00F00000) == UTF8_3_BYTE_PREFIX_)
+  else if ((flag & 0xF0) == UTF8_3_BYTE_PREFIX_)
   {
     return CodeRange::BMP_3_BYTES_RANGE;
   }
 
   // 1111 0xxx
-  else if ((flag & 0xF8000000) == UTF8_4_BYTE_PREFIX_)
+  else if ((flag & 0xF8) == UTF8_4_BYTE_PREFIX_)
   {
     return CodeRange::SMP_RANGE;
   }
@@ -277,16 +260,46 @@ CodeRange EncodingConverter::getUtf8CodeRange(UnicodeChar flag)
 }
 
 inline
-void EncodingConverter::transformUtf8CharToUnicodeChar(const std::string& src, std::wstring& dst)
+void EncodingConverter::transformUtf8CharToUnicodeChar(const std::string& src, std::wstring& dst, const CodeRange& code_range)
 {
+  wchar_t uni_code;
 
+  switch (code_range)
+  {
+    case nlp::jang::garnut::BMP_1_BYTES_RANGE:
+      uni_code = static_cast<wchar_t> (src[0]); // 0xxx xxxx
+      dst.push_back(uni_code);
+      break;
+    case nlp::jang::garnut::BMP_2_BYTES_RANGE:  // 110x xxyy 10yy yyyy => 0000 0xxx yyyy yyyy
+      uni_code = ((static_cast<wchar_t> (src[0])) << 3) & 0x07C0;
+      uni_code |= (static_cast<wchar_t> (src[1])) & 0x003F;
+      dst.push_back(uni_code);
+      break;
+    case nlp::jang::garnut::BMP_3_BYTES_RANGE:  // 1110 xxxx 10xx xxyy 10yy yyyy => xxxx xxxx yyyy yyyy
+      uni_code = ((static_cast<wchar_t> (src[0])) << 12) & 0xF000;
+      uni_code |= ((static_cast<wchar_t> (src[1])) << 6) & 0x0FC0;
+      uni_code |= (static_cast<wchar_t> (src[2])) & 0x003F;
+      dst.push_back(uni_code);
+      break;
+    case nlp::jang::garnut::SMP_RANGE:          // 1111 0xxx 10xx yyyy 10yy yyzz 10zz zzzz => 0000 0000 000x xxxx yyyy yyyy zzzz zzzz
+      uni_code = 0;
+      uni_code |= ((static_cast<wchar_t> (src[1])) << 20) & 0xF000;
+      uni_code |= ((static_cast<wchar_t> (src[2])) << 6) & 0x0FC0;
+      uni_code |= (static_cast<wchar_t> (src[3])) & 0x003F;
+      dst.push_back(uni_code);
+      break;
+    case nlp::jang::garnut::NONE:
+      break;
+    default:
+      break;
+  }
 }
 
 inline
 void EncodingConverter::transformUnicodeCharToUtf8Char(const UnicodeChar code, std::string& dst, const CodeRange& code_range)
 {
   char utf_code;
-  char high_surrogated, low_surrogated;
+  //char high_surrogated, low_surrogated;
 
   switch (code_range)
   {
