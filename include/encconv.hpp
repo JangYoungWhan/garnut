@@ -54,7 +54,7 @@ private:
   static CodeRange getUtf8CodeRange(unsigned char flag);
 
 private:
-  static void transformUtf8CharToUnicodeChar(const std::string& src, std::wstring& dst, const CodeRange& code_range);
+  static void transformUtf8CharToUnicodeChar(const char* src, std::wstring& dst, const CodeRange& code_range);
   static void transformUnicodeCharToUtf8Char(const UnicodeChar code, std::string& dst, const CodeRange& code_range);
 
 protected: // unicode range

@@ -260,32 +260,34 @@ CodeRange EncodingConverter::getUtf8CodeRange(unsigned char flag)
 }
 
 inline
-void EncodingConverter::transformUtf8CharToUnicodeChar(const std::string& src, std::wstring& dst, const CodeRange& code_range)
+void EncodingConverter::transformUtf8CharToUnicodeChar(const char* src, std::wstring& dst, const CodeRange& code_range)
 {
   wchar_t uni_code;
 
   switch (code_range)
   {
     case nlp::jang::garnut::BMP_1_BYTES_RANGE:
-      uni_code = static_cast<wchar_t> (src[0]); // 0xxx xxxx
+      uni_code = static_cast<wchar_t> (*src); // 0xxx xxxx
       dst.push_back(uni_code);
       break;
     case nlp::jang::garnut::BMP_2_BYTES_RANGE:  // 110x xxyy 10yy yyyy => 0000 0xxx yyyy yyyy
-      uni_code = ((static_cast<wchar_t> (src[0])) << 3) & 0x07C0;
-      uni_code |= (static_cast<wchar_t> (src[1])) & 0x003F;
+      uni_code = ((static_cast<wchar_t> (*src)) << 6) & 0x07C0;
+      uni_code |= (static_cast<wchar_t> (*(src + 1))) & 0x003F;
       dst.push_back(uni_code);
       break;
     case nlp::jang::garnut::BMP_3_BYTES_RANGE:  // 1110 xxxx 10xx xxyy 10yy yyyy => xxxx xxxx yyyy yyyy
-      uni_code = ((static_cast<wchar_t> (src[0])) << 12) & 0xF000;
-      uni_code |= ((static_cast<wchar_t> (src[1])) << 6) & 0x0FC0;
-      uni_code |= (static_cast<wchar_t> (src[2])) & 0x003F;
+      uni_code = ((static_cast<wchar_t> (*src)) << 12) & 0xF000;
+      uni_code |= ((static_cast<wchar_t> (*(src + 1))) << 6) & 0x0FC0;
+      uni_code |= (static_cast<wchar_t> (*(src + 2))) & 0x003F;
       dst.push_back(uni_code);
       break;
     case nlp::jang::garnut::SMP_RANGE:          // 1111 0xxx 10xx yyyy 10yy yyzz 10zz zzzz => 0000 0000 000x xxxx yyyy yyyy zzzz zzzz
-      uni_code = 0;
-      uni_code |= ((static_cast<wchar_t> (src[1])) << 20) & 0xF000;
-      uni_code |= ((static_cast<wchar_t> (src[2])) << 6) & 0x0FC0;
-      uni_code |= (static_cast<wchar_t> (src[3])) & 0x003F;
+      uni_code = ((static_cast<wchar_t> (*src)) << 2) & 0x001C;
+      uni_code |= (static_cast<wchar_t> (*(src + 1)) >> 4) & 0x0003;
+      dst.push_back(uni_code);
+      uni_code = (static_cast<wchar_t> (*(src + 1)) << 12) & 0xF000;
+      uni_code |= ((static_cast<wchar_t> (*(src + 2))) << 6) & 0x0FC0;
+      uni_code |= (static_cast<wchar_t> (*(src + 3))) & 0x003F;
       dst.push_back(uni_code);
       break;
     case nlp::jang::garnut::NONE:
