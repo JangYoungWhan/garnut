@@ -12,9 +12,7 @@
 #include <string>
 #include <vector>
 
-namespace nlp {
-namespace jang {
-namespace garnut {
+namespace nlp { namespace jang { namespace garnut {
 
 enum CodeRange
 {
@@ -76,8 +74,6 @@ protected: // utf8 range
 };
 
 
-} // namespace garnut
-} // namespace jang
-} // namespace nlp
+} } } // nlp::jang::garnut
 
 #endif

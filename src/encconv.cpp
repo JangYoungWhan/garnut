@@ -8,9 +8,7 @@
 
 #include "encconv.hpp"
 
-namespace nlp {
-namespace jang {
-namespace garnut {
+namespace nlp { namespace jang { namespace garnut {
 
 bool EncodingConverter::convertFromUtf8ToUnicode(const char* src, wchar_t* dst)
 {
@@ -353,6 +351,4 @@ void EncodingConverter::transformUnicodeCharToUtf8Char(const UnicodeChar code, s
   }
 }
 
-} // namespace garnut
-} // namespace jang
-} // namespace nlp
+} } } // nlp::jang::garnut
