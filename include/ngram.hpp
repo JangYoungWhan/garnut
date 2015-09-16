@@ -9,11 +9,16 @@
 #ifndef NGRAM_HPP_
 #define NGRAM_HPP_
 
-#include "ngram.hpp"
-
 #include <vector>
+#include <iostream>
 
 namespace nlp { namespace jang { namespace garnut {
+
+template <typename T_StrType>
+class Ngram;
+
+template <typename T_StrType>
+std::ostream& operator<<(std::ostream& os, const Ngram<T_StrType>& ngram);
 
 template <typename T_StrType>
 class Ngram
@@ -50,6 +55,11 @@ public:
   unsigned int getN() const
   {
     return this->n_;
+  }
+
+  const std::vector<T_StrType>& getNgram() const
+  {
+    return this->ngram_;
   }
 
 public: // operator overloading
@@ -95,10 +105,42 @@ public: // operator overloading
     return  this->ngram_ <= rhs.ngram_;
   }
 
+  friend std::ostream& operator<< <>(std::ostream& os, const Ngram<T_StrType>& ngram);
+
 protected:
   std::vector<T_StrType> ngram_;
   unsigned int n_;
 };
+
+template <typename T_StrType>
+std::ostream& operator<<(std::ostream& os, const Ngram<T_StrType>& ngram)
+{
+  for (size_t i=0; i<ngram.getN(); ++i)
+  {
+    os << ngram[i];
+    if (i != ngram.getN())
+    {
+      os << ' ';
+    }
+  }
+  
+  return os;
+}
+
+template <typename T_StrType>
+std::wostream& operator<<(std::wostream& os, const Ngram<T_StrType>& ngram)
+{
+  for (size_t i=0; i<ngram.getN(); ++i)
+  {
+    os << ngram[i];
+    if (i != ngram.getN())
+    {
+      os << L' ';
+    }
+  }
+  
+  return os;
+}
 
 } } } // nlp::jang::garnut
 
