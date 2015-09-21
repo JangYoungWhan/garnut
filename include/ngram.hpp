@@ -25,6 +25,7 @@ class Ngram
 {
 public:
   Ngram()
+    :n_(1)
   {
 
   }
@@ -40,9 +41,18 @@ public:
     this->ngram_ = ngram;
   }
 
+  Ngram(const Ngram<T_StrType>& ngram)
+    :n_(ngram.n_)
+  {
+    for (size_t i=0; i<ngram.getN(); ++i)
+    {
+      ngram_.push_back(ngram[i]);
+    }
+  }
+
   virtual ~Ngram()
   {
-
+    this->ngram_.clear();
   }
 
 public:
@@ -51,10 +61,46 @@ public:
     ngram_.push_back(token);
   }
 
+  void attach(const T_StrType& start, const T_StrType& end)
+  {
+    for (unsigned int i=0; i<n_-1; ++i)
+    {
+      ngram_.insert(ngram_.begin(), start);
+    }
+    for (unsigned int i=0; i<n_-1; ++i)
+    {
+      ngram_.push_back(end);
+    }
+  }
+
+  void attach(const T_StrType& start, const T_StrType& end, unsigned int level)
+  {
+    n_ = level;
+
+    for (unsigned int i=0; i<level-1; ++i)
+    {
+      ngram_.insert(ngram_.begin(), start);
+    }
+    for (unsigned int i=0; i<level-1; ++i)
+    {
+      ngram_.push_back(end);
+    }
+  }
+
+  const size_t size() const
+  {
+    return ngram_.size();
+  }
+
+
 public:
   unsigned int getN() const
   {
     return this->n_;
+  }
+  void setN(const unsigned int n)
+  {
+    this->n_ = n;
   }
 
   const std::vector<T_StrType>& getNgram() const

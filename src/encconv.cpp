@@ -10,12 +10,12 @@
 
 namespace nlp { namespace jang { namespace garnut {
 
-bool EncodingConverter::convertFromUtf8ToUnicode(const char* src, wchar_t* dst)
+bool EncodingConverter::convertUtf8ToUnicode(const char* src, wchar_t* dst)
 {
   return false;
 }
 
-bool EncodingConverter::convertFromUtf8ToUnicode(const std::string& src, std::wstring& dst)
+bool EncodingConverter::convertUtf8ToUnicode(const std::string& src, std::wstring& dst)
 {
   bool convert_result = true;
 
@@ -64,12 +64,12 @@ bool EncodingConverter::convertFromUtf8ToUnicode(const std::string& src, std::ws
   return convert_result;
 }
 
-bool EncodingConverter::convertFromUnicodeToUtf8(const wchar_t* src, char* dst)
+bool EncodingConverter::convertUnicodeToUtf8(const wchar_t* src, char* dst)
 {
   return false;
 }
 
-bool EncodingConverter::convertFromUnicodeToUtf8(const std::wstring& src, std::string& dst)
+bool EncodingConverter::convertUnicodeToUtf8(const std::wstring& src, std::string& dst)
 {
   bool convert_result = true;
 
@@ -114,7 +114,7 @@ bool EncodingConverter::convertFromUnicodeToUtf8(const std::wstring& src, std::s
   return convert_result;
 }
 
-bool EncodingConverter::convertFromUnicodeToUtf8(const std::vector<UnicodeChar>& src, std::string& dst)
+bool EncodingConverter::convertUnicodeToUtf8(const std::vector<UnicodeChar>& src, std::string& dst)
 {
   bool convert_result = false;
 

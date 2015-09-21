@@ -30,20 +30,20 @@ class EncodingConverter
 {
 public:
   // It returns std::wstring type basically.
-  static bool convertFromUtf8ToUnicode(const char* src, wchar_t* dst);
+  static bool convertUtf8ToUnicode(const char* src, wchar_t* dst);
 
   // It fill second parameter dst with std::wstring type basically.
-  static bool convertFromUtf8ToUnicode(const std::string& src, std::wstring& dst);
+  static bool convertUtf8ToUnicode(const std::string& src, std::wstring& dst);
   // It supports SMP unicode range.
-  static bool convertFromUtf8ToUnicode(const std::string& src, std::vector<UnicodeChar>& dst);
+  static bool convertUtf8ToUnicode(const std::string& src, std::vector<UnicodeChar>& dst);
 
   // It returns std::string type basically.
-  static bool convertFromUnicodeToUtf8(const wchar_t* src, char* dst);
+  static bool convertUnicodeToUtf8(const wchar_t* src, char* dst);
 
   // It fill second parameter dst with std::string type basically.
-  static bool convertFromUnicodeToUtf8(const std::wstring& src, std::string& dst);
+  static bool convertUnicodeToUtf8(const std::wstring& src, std::string& dst);
   // It supports SMP unicode range.
-  static bool convertFromUnicodeToUtf8(const std::vector<UnicodeChar>& src, std::string& dst);
+  static bool convertUnicodeToUtf8(const std::vector<UnicodeChar>& src, std::string& dst);
 
 private:
   static UnicodeChar getCodeFlag(size_t pos, const std::wstring& src);
