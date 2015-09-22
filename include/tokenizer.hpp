@@ -9,8 +9,9 @@
 #ifndef TOKENIZER_HPP_
 #define TOKENIZER_HPP_
 
+#include "ngram.hpp"
+
 #include <vector>
-#include <ngram.hpp>
 
 namespace nlp { namespace jang { namespace garnut {
 

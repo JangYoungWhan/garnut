@@ -41,18 +41,32 @@ public:
   }
 
 public:
-  static void insertStartEndTags(const std::string& src, Ngram<std::string>& dst, unsigned int n=2)
+  static void insertStartEndTags(Ngram<std::wstring>& target,
+                                 unsigned int n=2,
+                                 const std::wstring& begin_tag = L"<s>",
+                                 const std::wstring& end_tag = L"</s>")
+  {
+    target.attachTags(begin_tag, end_tag, n);
+  }
+
+  static void insertStartEndTags(const std::string& src, Ngram<std::string>& dst,
+                                 unsigned int n=2,
+                                 const std::string& begin_tag = "<s>",
+                                 const std::string& end_tag = "</s>")
   {
     splitStringToNgram<std::string>(src, dst, " ");
 
-    dst.attach("<s>", "</s>", n);
+    dst.attachTags(begin_tag, end_tag, n);
   }
 
-  static void insertStartEndTags(const std::wstring& src, Ngram<std::wstring>& dst, unsigned int n=2)
+  static void insertStartEndTags(const std::wstring& src, Ngram<std::wstring>& dst,
+                                 unsigned int n=2,
+                                 const std::wstring& begin_tag = L"<s>",
+                                 const std::wstring& end_tag = L"</s>")
   {
     splitStringToNgram<std::wstring>(src, dst, L" ");
 
-    dst.attach(L"<s>", L"</s>", n);
+    dst.attachTags(begin_tag, end_tag, n);
   }
 };
 

@@ -61,7 +61,7 @@ public:
     ngram_.push_back(token);
   }
 
-  void attach(const T_StrType& start, const T_StrType& end)
+  void attachTags(const T_StrType& start, const T_StrType& end)
   {
     for (unsigned int i=0; i<n_-1; ++i)
     {
@@ -73,7 +73,7 @@ public:
     }
   }
 
-  void attach(const T_StrType& start, const T_StrType& end, unsigned int level)
+  void attachTags(const T_StrType& start, const T_StrType& end, unsigned int level)
   {
     n_ = level;
 
