@@ -17,7 +17,8 @@ namespace nlp { namespace jang { namespace garnut {
 class SentenceDealer
 {
 public:
-  static void convertSentenceToWordNgram(const std::string& src, std::vector<Ngram<std::string>>& dst, unsigned int n=2)
+  static void convertSentenceToWordNgram(const std::string& src, std::vector<Ngram<std::string>>& dst,
+                                         unsigned int n=2)
   {
     Ngram<std::string> tokenWithTag;
     insertStartEndTags(src, tokenWithTag, n);
@@ -35,12 +36,33 @@ public:
 
   }
 
-  static void convertSentenceToLetterNgram(const std::wstring& src, Ngram<std::wstring>& dst, unsigned int n=2)
+  static void convertSentenceToLetterNgram(const std::string& src, Ngram<std::string::value_type>& dst,
+                                           unsigned int n=2)
   {
-    insertStartEndTags(src, dst, n);
+    for (auto& ch : src)
+    {
+      dst.push_back(ch);
+    }
+  }
+
+  static void convertSentenceToLetterNgram(const std::wstring& src, Ngram<std::wstring::value_type>& dst,
+                                           unsigned int n=2)
+  {
+    for (auto& wch : src)
+    {
+      dst.push_back(wch);
+    }
   }
 
 public:
+  static void insertStartEndTags(Ngram<std::string>& target,
+                                 unsigned int n=2,
+                                 const std::string& begin_tag = "<s>",
+                                 const std::string& end_tag = "</s>")
+  {
+    target.attachTags(begin_tag, end_tag, n);
+  }
+
   static void insertStartEndTags(Ngram<std::wstring>& target,
                                  unsigned int n=2,
                                  const std::wstring& begin_tag = L"<s>",
