@@ -12,9 +12,7 @@
 #include <iostream>
 #include <iomanip>
 
-namespace nlp {
-namespace jang {
-namespace ganet {
+namespace nlp { namespace jang { namespace garnut {
 
 template <typename T_int>
 class ProgressBar
@@ -45,14 +43,14 @@ void ProgressBar<T_int>::dispalyPrgressBar(T_int x, T_int n, int w)
   if ((x != n) && (x % (n/100+1) != 0)) return;
 
   float ratio =  x / static_cast<float>(n);
-  int c =  static_cast<int>(ratio*w);
+  T_int c =  static_cast<int>(ratio*w);
 
-  std::wcout << std::setw(3) << static_cast<int>(ratio*100) << "% [";
-  for (auto x=0; x<w; x++)
+  std::wcout << std::setw(3) << static_cast<T_int>(ratio*100) << "% [";
+  for (T_int p=0; p<w; p++)
   {
-    if (x < c)
+    if (p < c)
       std::wcout << "=";
-    else if(x == c)
+    else if(p == c)
       std::wcout << ">";
     else
       std::wcout << " ";
@@ -60,8 +58,6 @@ void ProgressBar<T_int>::dispalyPrgressBar(T_int x, T_int n, int w)
   std::wcout << "]\r" << std::flush;
 }
 
-} // namespace ganet
-} // namespace jang
-} // namespace nlp
+} } } // nlp::jang::garnut
 
 #endif
