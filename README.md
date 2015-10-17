@@ -1,4 +1,6 @@
 # garnut
+[![Build Status](https://travis-ci.org/JangYoungWhan/garnut.svg?branch=master)](https://travis-ci.org/JangYoungWhan/garnut)
+
 Garnut is a C++ library that consists of a number of classes that use the base NLP library to provide basic utilities.
 
 ##Prerequisites
