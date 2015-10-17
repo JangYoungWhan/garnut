@@ -10,14 +10,14 @@ env:
 before_install:
   # Install latest cmake
   - sudo apt-get remove cmake
-  - wget http://www.cmake.org/files/v3.3/CMAKE_VERSION.tar.gz
-  - tar -xzf CMAKE_VERSION.tar.gz
-  - cd CMAKE_VERSION
+  - wget http://www.cmake.org/files/v3.3/$CMAKE_VERSION.tar.gz
+  - tar -xzf $CMAKE_VERSION.tar.gz
+  - cd $CMAKE_VERSION
   - ./bootstrap > /dev/null
   - sudo make -j8 > /dev/null
   - sudo make install
   - cd ..
-  - rm -rf CMAKE_VERSION CMAKE_VERSION.tar.gz
+  - rm -rf $CMAKE_VERSION $CMAKE_VERSION.tar.gz
 
 install:
   - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
