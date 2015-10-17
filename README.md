@@ -7,7 +7,7 @@ Garnut is a C++ library that consists of a number of classes that use the base N
 
 - GCC version 4.8 or greater.
 - MSVC version VC110(2012) or greater.
-- [CMake](http://www.cmake.org/) version 3.2.0 or greater.
+- [CMake](http://www.cmake.org/) version 3.0 or greater.
 
 ##Getting Started
 
