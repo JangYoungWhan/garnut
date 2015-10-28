@@ -6,8 +6,8 @@
  *  Copyright 2015, YW. Jang, All rights reserved.
  */
 
-#ifndef ENC_CONV_HPP_
-#define ENC_CONV_HPP_
+#ifndef ENCODING_CONVERTER_HPP_
+#define ENCODING_CONVERTER_HPP_
 
 #include <string>
 #include <vector>

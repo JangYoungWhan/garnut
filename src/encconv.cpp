@@ -23,10 +23,6 @@ bool EncodingConverter::convertUtf8ToUnicode(const std::string& src, std::wstrin
   {
     std::string utf8_ch;
 
-    
-
-    //UnicodeChar flag = getCodeFlag(idx, src);
-
     CodeRange code_range = getUtf8CodeRange(src[idx]);
 
     utf8_ch.reserve(2);
