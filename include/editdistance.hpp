@@ -87,14 +87,24 @@ public:
         }
         else
           cost = 1;
-        H[i][j] = std::min(H[i-1][j-1] + cost,                        // substitution
-                           H[i   ][j-1] + 1,                          // insertion
-                           H[i-1 ][j  ] + 1,                          // deletion
-                           H[i1-1][j1-1] + (i-i1-1) + 1 + (j-j1-1));
+
+        H[i][j] = min4(H[i-1 ][j-1 ] + cost,                        // substitution
+                       H[i   ][j-1 ] + 1,                          // insertion
+                       H[i-1 ][j   ] + 1,                          // deletion
+                       H[i1-1][j1-1] + (i-i1-1) + 1 + (j-j1-1));
       }
       DA[str1[i-1]] = i;
     }
     return H[str1.length()][str2.length()];
+  }
+
+private:
+  unsigned int min4(unsigned int i1, unsigned int i2, unsigned int i3, unsigned int i4)
+  {
+    unsigned int temp_min1 = ((i1 < i2)? i1 : i2);
+    unsigned int temp_min2 = ((i3 < i4)? i3 : i4);
+
+    return ((temp_min1 < temp_min2)? temp_min1 : temp_min2);
   }
 };
 
