@@ -9,6 +9,7 @@
 #ifndef EDIT_DISTANCE_
 #define EDIT_DISTANCE_
 
+#include <cstdlib> // calloc in linux platform
 #include <vector>
 
 namespace nlp { namespace jang { namespace garnut {
