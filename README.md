@@ -3,13 +3,13 @@
 
 Garnut is a C++ library that consists of a number of classes that use the base NLP library to provide basic utilities.
 
-##Prerequisites
+## Prerequisites
 
 - GCC version 4.8 or greater.
 - MSVC version VC110(2012) or greater.
 - [CMake](http://www.cmake.org/) version 3.0 or greater.
 
-##Getting Started
+## Getting Started
 
 The easiest way to get started is to clone the repository:
 
@@ -28,6 +28,6 @@ make
 
 ```
 
-##Contact
+## Contact
 
 [stdjangyoungwhan@gmail.com](https://github.com/JangYoungWhan)
